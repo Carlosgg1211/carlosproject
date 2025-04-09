@@ -1,0 +1,82 @@
+#include <iostream> 
+#include <cstdlib> 
+#include <ctime> 
+using namespace std; 
+
+class Character {
+public:
+    string name;
+    int hp;
+    int maxHp;
+    int attackPower;
+
+    // Constructor to initialize name, hp, and attackPower
+    Character(string n, int h, int ap) : name(n), hp(h), maxHp(h), attackPower(ap) {}
+
+    void attack(Character& target) {
+        // Random damage from 1 to attackPower
+        int damage = rand() % attackPower + 1;
+        // Subtract damage from target.hp
+        target.hp -= damage;
+        // Print attack message
+        cout << name << " attacks " << target.name << " for " << damage << " damage!" << endl;
+    }
+
+    void heal() {
+        // Heal a random amount (e.g., 5–10 HP)
+        int healAmount = rand() % 6 + 5;
+        // Make sure hp doesn't go above maxHp
+        hp = (hp + healAmount > maxHp) ? maxHp : hp + healAmount;
+        // Print heal message
+        cout << name << " heals for " << healAmount << " HP!" << endl;
+    }
+
+    bool isDead() {
+        // Return true if hp <= 0
+        return hp <= 0;
+    }
+};
+
+int main() {
+    srand(time(0));
+
+    // Create player and enemy characters
+    Character player("Hero", 50, 15);
+    Character enemy("Villain", 40, 12);
+
+    cout << "== Battle Start! ==\n";
+
+    // Game loop while both characters are alive
+    while (!player.isDead() && !enemy.isDead()) {
+        // Print HP
+        cout << player.name << " HP: " << player.hp << "/" << player.maxHp << endl;
+        cout << enemy.name << " HP: " << enemy.hp << "/" << enemy.maxHp << endl;
+
+        // Ask for player's action (attack or heal)
+        cout << "Choose action: (1) Attack (2) Heal: ";
+        int choice;
+        cin >> choice;
+
+        if (choice == 1) {
+            player.attack(enemy);
+        } else if (choice == 2) {
+            player.heal();
+        }
+
+        // If enemy is alive, let enemy attack
+        if (!enemy.isDead()) {
+            enemy.attack(player);
+        }
+
+        cout << endl;
+    }
+
+    // Print win or lose message based on who survived
+    if (player.isDead()) {
+        cout << "You lost the battle..." << endl;
+    } else {
+        cout << "You won the battle!" << endl;
+    }
+
+    return 0;
+}
